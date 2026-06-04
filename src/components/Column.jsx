@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import DealCard from './DealCard.jsx'
-import { formatMoneyShort } from '../data/funnels.js'
+import { formatMoneyShort } from '../data/seed.js'
 
-export default function Column({ stage, deals, kind, onOpenDeal, drag, total }) {
+export default function Column({ stage, deals, funnel, onOpenDeal, drag, total }) {
   const [over, setOver] = useState(false)
   const isWin = stage.kind === 'win'
   const isLost = stage.kind === 'lost'
@@ -66,7 +66,7 @@ export default function Column({ stage, deals, kind, onOpenDeal, drag, total }) 
           <DealCard
             key={d.id}
             deal={d}
-            kind={kind}
+            funnel={funnel}
             onOpen={onOpenDeal}
             onDragStart={drag.onDragStart}
             onDragEnd={drag.onDragEnd}

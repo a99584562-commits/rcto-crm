@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import Column from './Column.jsx'
+import { getDealAmount } from '../data/model.js'
 
 export default function Board({ funnel, deals, onMove, onOpenDeal }) {
   const [draggingId, setDraggingId] = useState(null)
@@ -30,13 +31,13 @@ export default function Board({ funnel, deals, onMove, onOpenDeal }) {
       <div className="flex h-full min-w-max gap-4">
         {funnel.stages.map((stage) => {
           const stageDeals = deals.filter((d) => d.stageId === stage.id)
-          const total = stageDeals.reduce((s, d) => s + (d.amount || 0), 0)
+          const total = stageDeals.reduce((s, d) => s + (getDealAmount(d) || 0), 0)
           return (
             <Column
               key={stage.id}
               stage={stage}
               deals={stageDeals}
-              kind={funnel.kind}
+              funnel={funnel}
               onOpenDeal={onOpenDeal}
               drag={drag}
               total={total}

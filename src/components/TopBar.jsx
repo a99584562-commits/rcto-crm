@@ -1,24 +1,5 @@
 import { ICONS, IconSearch, IconPhone, IconDoc, IconLayers } from './Icons.jsx'
-import { formatMoneyShort } from '../data/funnels.js'
-
-function BrandMark() {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="grid h-10 w-10 place-items-center rounded-2xl bg-brand-600 text-[17px] font-extrabold text-white shadow-glow">
-        Р
-      </div>
-      <div className="leading-tight">
-        <div className="flex items-center gap-2">
-          <span className="text-[16px] font-extrabold tracking-tight text-ink-900">РЦТО</span>
-          <span className="hidden rounded-full bg-ink-900/[0.05] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-400 sm:inline">
-            CRM
-          </span>
-        </div>
-        <span className="hidden text-[11px] font-medium text-ink-400 sm:block">Откройте для себя — путёвки, лагеря, туры</span>
-      </div>
-    </div>
-  )
-}
+import { formatMoneyShort } from '../data/seed.js'
 
 function IntegrationPill({ icon: Icon, label, onClick }) {
   return (
@@ -38,9 +19,12 @@ function IntegrationPill({ icon: Icon, label, onClick }) {
 
 export default function TopBar({ funnels, activeId, onSelect, query, setQuery, counts, onOpenIntegrations }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-ink-900/[0.06] bg-canvas/85 backdrop-blur-xl">
-      <div className="flex flex-wrap items-center gap-3 px-5 py-3.5 sm:px-8">
-        <BrandMark />
+    <header className="z-20 border-b border-ink-900/[0.06] bg-canvas/85 backdrop-blur-xl">
+      <div className="flex flex-wrap items-center gap-3 px-5 pt-4 sm:px-7">
+        <div>
+          <h1 className="text-[18px] font-extrabold tracking-tight text-ink-900">Сделки по воронкам</h1>
+          <p className="text-[11.5px] font-medium text-ink-400">Канбан · перетаскивайте сделки между стадиями</p>
+        </div>
         <div className="ml-auto flex items-center gap-2.5">
           <div className="relative">
             <IconSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[15px] text-ink-400" />
@@ -48,7 +32,7 @@ export default function TopBar({ funnels, activeId, onSelect, query, setQuery, c
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Поиск сделки, телефона…"
-              className="w-40 rounded-full bg-white py-2 pl-9 pr-3 text-[13px] font-medium text-ink-900 shadow-soft outline-none ring-1 ring-ink-900/[0.05] transition-all duration-300 placeholder:text-ink-300 focus:w-60 focus:ring-2 focus:ring-brand-500"
+              className="w-44 rounded-full bg-white py-2 pl-9 pr-3 text-[13px] font-medium text-ink-900 shadow-soft outline-none ring-1 ring-ink-900/[0.05] transition-all duration-300 placeholder:text-ink-300 focus:w-64 focus:ring-2 focus:ring-brand-500"
             />
           </div>
           <IntegrationPill icon={IconPhone} label="Телефония" onClick={onOpenIntegrations} />
@@ -56,8 +40,7 @@ export default function TopBar({ funnels, activeId, onSelect, query, setQuery, c
         </div>
       </div>
 
-      {/* Табы воронок */}
-      <nav className="flex items-center gap-2 overflow-x-auto px-5 pb-3 sm:px-8 scroll-thin">
+      <nav className="scroll-thin flex items-center gap-2 overflow-x-auto px-5 pb-3 pt-3 sm:px-7">
         {funnels.map((f) => {
           const Icon = ICONS[f.icon] || IconLayers
           const active = f.id === activeId
@@ -72,20 +55,13 @@ export default function TopBar({ funnels, activeId, onSelect, query, setQuery, c
             >
               <span
                 className="grid h-7 w-7 place-items-center rounded-xl text-[15px] transition-colors"
-                style={{
-                  backgroundColor: active ? f.accent + '18' : 'transparent',
-                  color: active ? f.accent : '#838ca0',
-                }}
+                style={{ backgroundColor: active ? f.accent + '18' : 'transparent', color: active ? f.accent : '#838ca0' }}
               >
                 <Icon />
               </span>
               <span className="text-left leading-tight">
-                <span className={`block text-[13px] font-bold tracking-tight ${active ? 'text-ink-900' : 'text-ink-500'}`}>
-                  {f.name}
-                </span>
-                <span className="block text-[10.5px] font-medium text-ink-400">
-                  {c.count} сделок · {formatMoneyShort(c.sum)}
-                </span>
+                <span className={`block text-[13px] font-bold tracking-tight ${active ? 'text-ink-900' : 'text-ink-500'}`}>{f.name}</span>
+                <span className="block text-[10.5px] font-medium text-ink-400">{c.count} сделок · {formatMoneyShort(c.sum)}</span>
               </span>
             </button>
           )
