@@ -3,6 +3,7 @@ import { StoreProvider, useStore } from './store/StoreContext.jsx'
 import { canManageUsers } from './data/perm.js'
 import Sidebar from './components/Sidebar.jsx'
 import PipelinesView from './components/PipelinesView.jsx'
+import TasksView from './components/tasks/TasksView.jsx'
 import ChatView from './components/chat/ChatView.jsx'
 import ContactsView from './components/registry/ContactsView.jsx'
 import CompaniesView from './components/registry/CompaniesView.jsx'
@@ -13,6 +14,7 @@ import UsersView from './components/registry/UsersView.jsx'
 
 const VIEWS = {
   pipelines: PipelinesView,
+  tasks: TasksView,
   chats: ChatView,
   contacts: ContactsView,
   companies: CompaniesView,

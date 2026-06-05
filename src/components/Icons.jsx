@@ -88,6 +88,12 @@ export const IconClock = wrap(
   </>,
 )
 
+export const IconTask = wrap(
+  <>
+    <rect x="5" y="4" width="14" height="17" rx="2" />
+    <path d="M9 3.5h6v3H9zM8.5 12l2 2 4-4" />
+  </>,
+)
 export const IconChat = wrap(
   <path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />,
 )

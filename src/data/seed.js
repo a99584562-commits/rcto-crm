@@ -2,6 +2,7 @@
 // Сид демо-данных РЦТО. Реестры + воронки + сделки со вложенной структурой
 // (сделка → участники → бенефициары). Сохраняется в localStorage стором.
 // ─────────────────────────────────────────────────────────────────────────
+import { todayISO, addDaysISO } from './model.js'
 
 export const MANAGERS = {
   shutova: { name: 'Екатерина Шутова', initials: 'ЕШ', color: '#1f47f5' },
@@ -251,6 +252,28 @@ export const SEED_EVENTS = [
   { id: 'ev6', dealId: 'Ф-2207', funnelId: 'fiz', type: 'created', text: 'Сделка создана из лида', userId: 'u-shutova', at: 'сегодня, 09:00' },
 ]
 
+// ── ДЕЛА / ЗАДАЧИ ────────────────────────────────────────────────────────
+export const TASK_TAGS = [
+  { id: 'Звонок', color: '#1f47f5' },
+  { id: 'Встреча', color: '#7c5cff' },
+  { id: 'Письмо', color: '#0ea5a3' },
+  { id: 'Задача', color: '#5b6479' },
+  { id: 'Документы', color: '#e08a16' },
+  { id: 'Оплата', color: '#84cc16' },
+]
+export const taskTagColor = (id) => TASK_TAGS.find((t) => t.id === id)?.color || '#5b6479'
+
+function seedTasks() {
+  return [
+    { id: 'tk1', dealId: 'Ф-GRP-01', funnelId: 'fiz', title: 'Позвонить Чирковой по третьему договору', tag: 'Звонок', dueDate: todayISO(), dueTime: '14:00', responsibleId: 'u-anna', done: false },
+    { id: 'tk2', dealId: 'Ф-GRP-01', funnelId: 'fiz', title: 'Проконтролировать предоплату Петровых', tag: 'Оплата', dueDate: addDaysISO(-1), dueTime: '', responsibleId: 'u-anna', done: false },
+    { id: 'tk3', dealId: 'Ф-2209', funnelId: 'fiz', title: 'Выставить счёт и отправить договор', tag: 'Документы', dueDate: addDaysISO(1), dueTime: '11:00', responsibleId: 'u-shutova', done: false },
+    { id: 'tk4', dealId: 'Ю-3110', funnelId: 'ul', title: 'Подготовить КП для «Ижсталь»', tag: 'Задача', dueDate: addDaysISO(2), dueTime: '', responsibleId: 'u-ruslan', done: false },
+    { id: 'tk5', dealId: 'Т-4059', funnelId: 'to', title: 'Напомнить о туре за неделю', tag: 'Звонок', dueDate: addDaysISO(5), dueTime: '', responsibleId: 'u-ruslan', done: false },
+    { id: 'tk6', dealId: 'Ф-2213', funnelId: 'fiz', title: 'Уточнить ЖД-билеты', tag: 'Задача', dueDate: todayISO(), dueTime: '', responsibleId: 'u-shutova', done: true },
+  ]
+}
+
 export function buildInitialState() {
   return {
     companies: SEED_COMPANIES.map((x) => ({ ...x })),
@@ -263,6 +286,7 @@ export function buildInitialState() {
     users: SEED_USERS.map((x) => ({ ...x })),
     chats: JSON.parse(JSON.stringify(SEED_CHATS)),
     events: SEED_EVENTS.map((x) => ({ ...x })),
+    tasks: seedTasks(),
     currentUserId: 'u-olga',
   }
 }

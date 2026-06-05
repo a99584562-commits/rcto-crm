@@ -60,6 +60,41 @@ export function primaryContactName(member, contacts) {
 
 export const ourCompany = (companies) => companies.find((c) => c.type === 'our') || null
 
+// ── Даты для дел/задач ────────────────────────────────────────────────────
+function isoLocal(d) {
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+export function todayISO() {
+  return isoLocal(new Date())
+}
+export function addDaysISO(n) {
+  const d = new Date()
+  d.setDate(d.getDate() + n)
+  return isoLocal(d)
+}
+// overdue | today | tomorrow | later | none
+export function dueBucket(due) {
+  if (!due) return 'none'
+  const t = todayISO()
+  if (due < t) return 'overdue'
+  if (due === t) return 'today'
+  if (due === addDaysISO(1)) return 'tomorrow'
+  return 'later'
+}
+export function formatDue(due, time) {
+  if (!due) return 'без срока'
+  const tm = time ? ' ' + time : ''
+  const b = dueBucket(due)
+  if (b === 'today') return 'сегодня' + tm
+  if (b === 'tomorrow') return 'завтра' + tm
+  const [y, m, d] = due.split('-')
+  const year = y === String(new Date().getFullYear()) ? '' : '.' + y.slice(2)
+  return `${d}.${m}${year}${tm}`
+}
+
 // Время события: ISO → относительное; готовые строки возвращаем как есть
 export function formatWhen(at) {
   if (!at) return ''

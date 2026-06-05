@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useStore } from '../store/StoreContext.jsx'
 import { currentUser, canManageUsers, ROLE_LABELS, ROLE_COLORS } from '../data/perm.js'
-import { IconLayers, IconUser, IconBuilding, IconGlobe, IconDoc, IconBolt, IconChat, IconUsers } from './Icons.jsx'
+import { IconLayers, IconUser, IconBuilding, IconGlobe, IconDoc, IconBolt, IconChat, IconUsers, IconTask } from './Icons.jsx'
 
 const NAV = [
   { id: 'pipelines', label: 'Воронки', icon: IconLayers },
+  { id: 'tasks', label: 'Задачи', icon: IconTask },
   { id: 'chats', label: 'Чаты', icon: IconChat },
   { id: 'contacts', label: 'Контакты', icon: IconUser },
   { id: 'companies', label: 'Компании', icon: IconBuilding },
@@ -20,6 +21,7 @@ export default function Sidebar({ view, setView }) {
   const admin = canManageUsers(state)
   const [switcher, setSwitcher] = useState(false)
   const counts = {
+    tasks: state.tasks.filter((t) => !t.done).length,
     chats: state.chats.length,
     contacts: state.contacts.length,
     companies: state.companies.length,

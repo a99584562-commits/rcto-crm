@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useStore } from '../../store/StoreContext.jsx'
 import { canEdit, currentUser } from '../../data/perm.js'
 import { formatWhen } from '../../data/model.js'
-import { IconBolt, IconArrow, IconUser, IconCheck, IconDoc, IconPhone, IconClock } from '../Icons.jsx'
+import { IconBolt, IconArrow, IconUser, IconCheck, IconDoc, IconPhone, IconClock, IconTask } from '../Icons.jsx'
 
 const TYPE_META = {
   created: { icon: IconBolt, color: '#1f47f5' },
@@ -13,6 +13,7 @@ const TYPE_META = {
   doc: { icon: IconDoc, color: '#1f47f5' },
   call: { icon: IconPhone, color: '#84cc16' },
   onec: { icon: IconDoc, color: '#0ea5a3' },
+  task: { icon: IconTask, color: '#7c5cff' },
 }
 
 function Avatar({ user, size = 28 }) {

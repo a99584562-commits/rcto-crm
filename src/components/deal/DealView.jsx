@@ -9,6 +9,7 @@ import MemberCard from './MemberCard.jsx'
 import GenerateDialog from '../templates/GenerateDialog.jsx'
 import StageBar from './StageBar.jsx'
 import Timeline from './Timeline.jsx'
+import DealTasks from './DealTasks.jsx'
 import { IconClose, IconPhone, IconDoc, IconCheck, IconRuble, IconUser } from '../Icons.jsx'
 
 export default function DealView({ deal, funnel, onClose }) {
@@ -112,6 +113,8 @@ export default function DealView({ deal, funnel, onClose }) {
         {/* Тело: слева поля, справа лента */}
         <div className="grid min-h-0 flex-1 grid-cols-1 lg:grid-cols-[1fr_372px]">
           <div className="scroll-thin space-y-5 overflow-y-auto px-5 py-5">
+            <DealTasks deal={deal} funnel={funnel} />
+
             <div>
               <h3 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-[0.15em] text-ink-400">Данные сделки</h3>
               <div className="grid grid-cols-2 gap-1.5 xl:grid-cols-3">

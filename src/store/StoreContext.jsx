@@ -4,8 +4,14 @@ import { DEAL_FIELDS, FUNNEL_CONFIG } from '../data/schema.js'
 import { uid } from '../data/model.js'
 import { buildSampleTemplate } from '../docs/docxEngine.js'
 
-const KEY = 'rcto-crm-v3'
-const VERSION = 3
+const KEY = 'rcto-crm-v4'
+const VERSION = 4
+
+const ddmmyyyy = (iso) => {
+  if (!iso || !iso.includes('-')) return iso || ''
+  const [y, m, d] = iso.split('-')
+  return `${d}.${m}.${y}`
+}
 
 function freshState() {
   const s = buildInitialState()
@@ -26,7 +32,7 @@ function loadState() {
   return freshState()
 }
 
-const COLLECTIONS = ['companies', 'contacts', 'camps', 'shifts', 'templates', 'documents', 'users']
+const COLLECTIONS = ['companies', 'contacts', 'camps', 'shifts', 'templates', 'documents', 'users', 'tasks']
 
 function mapDeal(state, funnelId, dealId, fn) {
   return { ...state, deals: { ...state.deals, [funnelId]: state.deals[funnelId].map((d) => (d.id === dealId ? fn(d) : d)) } }
@@ -108,6 +114,23 @@ function reducer(state, action) {
         ...d, members: (d.members || []).map((m) => (m.id === action.memberId ? { ...m, beneficiaries: (m.beneficiaries || []).filter((b) => b.id !== action.benId) } : m)),
       }))
 
+    case 'TASK_ADD': {
+      const ns = { ...state, tasks: [action.task, ...state.tasks] }
+      if (action.task.dealId) {
+        const due = action.task.dueDate ? ` (до ${ddmmyyyy(action.task.dueDate)}${action.task.dueTime ? ' ' + action.task.dueTime : ''})` : ''
+        ns.events = withEvent(state, action.task.dealId, action.task.funnelId, 'task', `Поставлено дело: ${action.task.title}${due}`)
+      }
+      return ns
+    }
+    case 'TASK_TOGGLE': {
+      const t = state.tasks.find((x) => x.id === action.id)
+      if (!t) return state
+      const done = !t.done
+      const ns = { ...state, tasks: state.tasks.map((x) => (x.id === action.id ? { ...x, done } : x)) }
+      if (done && t.dealId) ns.events = withEvent(state, t.dealId, t.funnelId, 'task', `Дело выполнено: ${t.title}`)
+      return ns
+    }
+
     case 'LOG_EVENT':
       return { ...state, events: withEvent(state, action.dealId, action.funnelId, action.eventType, action.text) }
 
@@ -151,6 +174,9 @@ export function StoreProvider({ children }) {
       templates: reg('templates'),
       documents: reg('documents'),
       users: reg('users'),
+      tasks: reg('tasks'),
+      addTask: (task) => dispatch({ type: 'TASK_ADD', task }),
+      toggleTask: (id) => dispatch({ type: 'TASK_TOGGLE', id }),
       setCurrentUser: (id) => dispatch({ type: 'SET_USER', id }),
       addDeal: (funnelId, deal) => dispatch({ type: 'DEAL_ADD', funnelId, deal }),
       moveDeal: (funnelId, dealId, stageId) => dispatch({ type: 'DEAL_MOVE', funnelId, dealId, stageId }),
