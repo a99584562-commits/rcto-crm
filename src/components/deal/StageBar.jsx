@@ -1,4 +1,4 @@
-// Переключатель стадий «шевронами», как в Битрикс24 / amoCRM.
+// Переключатель стадий «шевронами» (как в популярных CRM).
 export default function StageBar({ funnel, deal, onMove, disabled }) {
   const idx = funnel.stages.findIndex((s) => s.id === deal.stageId)
 
