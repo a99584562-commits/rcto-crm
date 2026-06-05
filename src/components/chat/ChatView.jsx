@@ -14,6 +14,7 @@ export default function ChatView() {
   const me = currentUser(state)
   const [activeId, setActiveId] = useState(state.chats[0]?.id || null)
   const [text, setText] = useState('')
+  const [picker, setPicker] = useState(false)
   const scrollRef = useRef(null)
   const chat = state.chats.find((c) => c.id === activeId) || state.chats[0]
   const userById = (id) => state.users.find((u) => u.id === id)
@@ -34,6 +35,15 @@ export default function ChatView() {
     const id = uid('ch')
     actions.addChat({ id, type: 'channel', name, memberIds: state.users.map((u) => u.id), messages: [] })
     setActiveId(id)
+    setPicker(false)
+  }
+  function openDM(u) {
+    setPicker(false)
+    const existing = state.chats.find((c) => c.type === 'direct' && c.memberIds.length === 2 && c.memberIds.includes(me.id) && c.memberIds.includes(u.id))
+    if (existing) { setActiveId(existing.id); return }
+    const id = uid('ch')
+    actions.addChat({ id, type: 'direct', name: u.name, memberIds: [me.id, u.id], messages: [] })
+    setActiveId(id)
   }
 
   return (
@@ -47,8 +57,29 @@ export default function ChatView() {
 
       <div className="grid min-h-0 flex-1 grid-cols-[280px_1fr]">
         {/* Список чатов */}
-        <div className="scroll-thin flex flex-col gap-1 overflow-y-auto border-r border-ink-900/[0.06] p-3">
-          <button onClick={addChannel} className="mb-1 rounded-xl bg-brand-600 py-2 text-[13px] font-bold text-white shadow-glow transition-all hover:bg-brand-700 active:scale-[0.98]">+ Канал</button>
+        <div className="scroll-thin relative flex flex-col gap-1 overflow-y-auto border-r border-ink-900/[0.06] p-3">
+          <button onClick={() => setPicker((p) => !p)} className="mb-1 rounded-xl bg-brand-600 py-2 text-[13px] font-bold text-white shadow-glow transition-all hover:bg-brand-700 active:scale-[0.98]">+ Написать сотруднику</button>
+
+          {picker && (
+            <>
+              <div className="fixed inset-0 z-10" onClick={() => setPicker(false)} />
+              <div className="absolute left-3 right-3 top-[52px] z-20 overflow-hidden rounded-2xl bg-white shadow-lift ring-1 ring-ink-900/[0.08] animate-fade-up">
+                <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-ink-400">Выберите сотрудника</div>
+                <div className="max-h-[320px] overflow-y-auto scroll-thin">
+                  {state.users.filter((u) => u.id !== me?.id).map((u) => (
+                    <button key={u.id} onClick={() => openDM(u)} className="flex w-full items-center gap-2.5 px-3 py-2 text-left transition-colors hover:bg-canvas">
+                      <span className="relative">
+                        <span className="grid h-8 w-8 place-items-center rounded-full text-[11px] font-bold text-white" style={{ backgroundColor: u.color }}>{u.initials}</span>
+                        {u.online && <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white" />}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate text-[13px] font-bold text-ink-900">{u.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <button onClick={addChannel} className="flex w-full items-center gap-2 border-t border-ink-900/[0.06] px-3 py-2.5 text-[12.5px] font-bold text-brand-600 hover:bg-brand-50">+ Создать канал</button>
+              </div>
+            </>
+          )}
           {state.chats.map((c) => {
             const active = c.id === chat?.id
             const last = c.messages[c.messages.length - 1]

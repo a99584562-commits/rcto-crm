@@ -42,6 +42,14 @@ export function buildDocxBase64(paragraphsXml) {
   return zip.generate({ type: 'base64' })
 }
 
+// Сборка .docx из обычного текста (для встроенного редактора шаблонов):
+// каждая строка → абзац. Строки с метками цикла {#...}/{/...} тоже становятся абзацами.
+export function buildDocxBase64FromText(text) {
+  const lines = String(text || '').replace(/\r/g, '').split('\n')
+  const xml = lines.map((line) => paragraph(line)).join('')
+  return buildDocxBase64(xml)
+}
+
 // Встроенный пример: договор по родителю со списком детей (теги + цикл)
 export function buildSampleTemplate() {
   const p = [
@@ -103,6 +111,24 @@ export function detectTags(arrayBuffer) {
   }
   const base64 = zip.generate({ type: 'base64' })
   return { tags, loops, base64 }
+}
+
+// Разбор меток прямо из текста (для встроенного редактора)
+export function parseTextTags(text) {
+  const loops = {}
+  const usedInLoop = new Set()
+  const loopRe = /\{#([^}]+)\}([\s\S]*?)\{\/\1\}/g
+  let m
+  while ((m = loopRe.exec(text))) {
+    const name = m[1].trim()
+    const innerTags = [...m[2].matchAll(/\{([^#/}][^}]*)\}/g)].map((x) => x[1].trim())
+    loops[name] = [...new Set(innerTags)]
+    innerTags.forEach((t) => usedInLoop.add(t))
+  }
+  const loopNames = new Set(Object.keys(loops))
+  const all = [...String(text).matchAll(/\{([^#/}][^}]*)\}/g)].map((x) => x[1].trim())
+  const tags = [...new Set(all)].filter((t) => !loopNames.has(t) && !usedInLoop.has(t))
+  return { tags, loops }
 }
 
 // ── Резолверы значений ────────────────────────────────────────────────────
@@ -196,6 +222,26 @@ export function renderToBlob(template, data) {
     type: 'blob',
     mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   })
+}
+
+// Рендер шаблона в простой текст (для предпросмотра в интерфейсе)
+export function renderToText(template, data) {
+  try {
+    const zip = new PizZip(template.fileBase64, { base64: true })
+    const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true, delimiters: { start: '{', end: '}' } })
+    doc.render(data)
+    const xml = doc.getZip().file('word/document.xml').asText()
+    return xml
+      .replace(/<\/w:p>/g, '\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  } catch (e) {
+    return 'Не удалось построить предпросмотр: ' + (e?.message || e)
+  }
 }
 
 export function sampleBlob() {

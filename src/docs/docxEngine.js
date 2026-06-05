@@ -3,7 +3,7 @@ import { renderToBlob, sampleBlob } from './docxBuild.js'
 
 // Чистая логика — в docxBuild.js (тестируется headless).
 // Здесь только обёртки скачивания (file-saver требует браузер).
-export { buildSampleTemplate, detectTags, buildData } from './docxBuild.js'
+export { buildSampleTemplate, detectTags, buildData, renderToText, buildDocxBase64FromText, parseTextTags } from './docxBuild.js'
 
 export function renderDocx(template, data, fileName) {
   const blob = renderToBlob(template, data)
