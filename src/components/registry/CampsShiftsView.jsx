@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useStore } from '../../store/StoreContext.jsx'
+import { canEdit } from '../../data/perm.js'
 import { uid, shiftsOfCamp } from '../../data/model.js'
 import { formatMoneyShort } from '../../data/seed.js'
 import EditableField from '../common/EditableField.jsx'
@@ -8,6 +9,7 @@ import { IconClose, IconGlobe } from '../Icons.jsx'
 
 export default function CampsShiftsView() {
   const { state, actions } = useStore()
+  const editable = canEdit(state)
   const [selId, setSelId] = useState(state.camps[0]?.id || null)
   const sel = state.camps.find((c) => c.id === selId) || state.camps[0]
   const shifts = sel ? shiftsOfCamp(state.shifts, sel.id) : []
@@ -34,7 +36,7 @@ export default function CampsShiftsView() {
       <div className="grid flex-1 grid-cols-[320px_1fr] overflow-hidden">
         {/* Лагеря */}
         <div className="scroll-thin flex flex-col gap-2 overflow-y-auto border-r border-ink-900/[0.06] p-4">
-          <button onClick={addCamp} className="mb-1 rounded-xl bg-brand-600 py-2 text-[13px] font-bold text-white shadow-glow transition-all hover:bg-brand-700 active:scale-[0.98]">+ Объект</button>
+          {editable && <button onClick={addCamp} className="mb-1 rounded-xl bg-brand-600 py-2 text-[13px] font-bold text-white shadow-glow transition-all hover:bg-brand-700 active:scale-[0.98]">+ Объект</button>}
           {state.camps.map((c) => {
             const active = c.id === sel?.id
             const cnt = shiftsOfCamp(state.shifts, c.id).length
@@ -63,7 +65,7 @@ export default function CampsShiftsView() {
 
               <div className="mb-2 flex items-center justify-between px-1">
                 <h2 className="text-[13px] font-bold tracking-tight text-ink-900">Смены</h2>
-                <button onClick={addShift} className="rounded-lg bg-brand-50 px-2.5 py-1 text-[12px] font-bold text-brand-600 hover:bg-brand-100">+ Смена</button>
+                {editable && <button onClick={addShift} className="rounded-lg bg-brand-50 px-2.5 py-1 text-[12px] font-bold text-brand-600 hover:bg-brand-100">+ Смена</button>}
               </div>
 
               <div className="overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-ink-900/[0.05]">
@@ -83,7 +85,7 @@ export default function CampsShiftsView() {
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-ink-900/[0.06]"><div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: pct >= 95 ? '#f0654a' : pct >= 75 ? '#e08a16' : '#84cc16' }} /></div>
                         <span className="shrink-0 text-[10.5px] font-bold text-ink-400">{s.booked}/{s.capacity}</span>
                       </div>
-                      <button onClick={() => actions.shifts.remove(s.id)} className="grid h-7 w-7 place-items-center rounded-lg text-ink-300 hover:bg-rose-50 hover:text-rose-500"><IconClose className="text-[15px]" /></button>
+                      {editable ? <button onClick={() => actions.shifts.remove(s.id)} className="grid h-7 w-7 place-items-center rounded-lg text-ink-300 hover:bg-rose-50 hover:text-rose-500"><IconClose className="text-[15px]" /></button> : <span />}
                     </div>
                   )
                 })}

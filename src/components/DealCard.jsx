@@ -1,6 +1,7 @@
 import { MANAGERS, SOURCES, formatMoneyShort } from '../data/seed.js'
 import { FUNNEL_CONFIG } from '../data/schema.js'
 import { getDealAmount, getDealPaid, getMembers, beneficiaryCount, byId, memberContacts } from '../data/model.js'
+import { canEdit } from '../data/perm.js'
 import { useStore } from '../store/StoreContext.jsx'
 import { IconPhone } from './Icons.jsx'
 
@@ -24,6 +25,7 @@ function plural(n, one, few, many) {
 
 export default function DealCard({ deal, funnel, onOpen, onDragStart, onDragEnd, dragging }) {
   const { state } = useStore()
+  const editable = canEdit(state)
   const cfg = FUNNEL_CONFIG[funnel.kind] || {}
   const amount = getDealAmount(deal)
   const paid = getDealPaid(deal)
@@ -57,8 +59,8 @@ export default function DealCard({ deal, funnel, onOpen, onDragStart, onDragEnd,
 
   return (
     <article
-      draggable
-      onDragStart={(e) => onDragStart(e, deal)}
+      draggable={editable}
+      onDragStart={(e) => editable && onDragStart(e, deal)}
       onDragEnd={onDragEnd}
       onClick={() => onOpen(deal)}
       className={`group cursor-pointer select-none rounded-2xl bg-white p-3.5 shadow-soft ring-1 ring-ink-900/[0.04] transition-all duration-300 ease-spring hover:-translate-y-0.5 hover:shadow-lift hover:ring-brand-500/30 active:scale-[0.98] ${dragging ? 'dragging' : ''}`}

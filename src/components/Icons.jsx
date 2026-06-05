@@ -88,6 +88,17 @@ export const IconClock = wrap(
   </>,
 )
 
+export const IconChat = wrap(
+  <path d="M5 5h14a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z" />,
+)
+export const IconUsers = wrap(
+  <>
+    <circle cx="9" cy="8" r="3" />
+    <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+    <path d="M16 5.5a3 3 0 0 1 0 5.8M16.5 19a5.5 5.5 0 0 0-2.5-4.6" opacity="0.7" />
+  </>,
+)
+
 export const ICONS = {
   inbox: IconInbox,
   user: IconUser,

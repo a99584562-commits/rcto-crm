@@ -59,3 +59,20 @@ export function primaryContactName(member, contacts) {
 }
 
 export const ourCompany = (companies) => companies.find((c) => c.type === 'our') || null
+
+// Время события: ISO → относительное; готовые строки возвращаем как есть
+export function formatWhen(at) {
+  if (!at) return ''
+  if (typeof at === 'string' && at.includes('T')) {
+    const d = new Date(at)
+    const now = new Date()
+    const hhmm = d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+    if (now - d < 60000) return 'только что'
+    if (d.toDateString() === now.toDateString()) return 'сегодня, ' + hhmm
+    const y = new Date(now)
+    y.setDate(now.getDate() - 1)
+    if (d.toDateString() === y.toDateString()) return 'вчера, ' + hhmm
+    return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }) + ', ' + hhmm
+  }
+  return at
+}

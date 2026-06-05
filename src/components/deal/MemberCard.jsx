@@ -4,18 +4,20 @@ import { memberContacts, byId } from '../../data/model.js'
 import { uid } from '../../data/model.js'
 import { formatMoney } from '../../data/seed.js'
 import { useStore } from '../../store/StoreContext.jsx'
+import { canEdit } from '../../data/perm.js'
 import EditableField from '../common/EditableField.jsx'
 import { FieldBox } from '../common/SchemaField.jsx'
 import BeneficiaryEditor from './BeneficiaryEditor.jsx'
 import { IconClose, IconDoc, IconPhone, IconUser } from '../Icons.jsx'
 
-function StatusSelect({ value, onChange }) {
+function StatusSelect({ value, onChange, disabled }) {
   const color = SIGN_STATUS_COLOR[value] || '#aab2c4'
   return (
     <select
       value={value}
+      disabled={disabled}
       onChange={(e) => onChange(e.target.value)}
-      className="cursor-pointer rounded-full border-none px-2.5 py-1 text-[11px] font-bold outline-none ring-1 ring-inset transition-shadow focus:ring-2"
+      className="cursor-pointer rounded-full border-none px-2.5 py-1 text-[11px] font-bold outline-none ring-1 ring-inset transition-shadow focus:ring-2 disabled:cursor-default"
       style={{ color, backgroundColor: color + '18', boxShadow: `inset 0 0 0 1px ${color}33` }}
       title="Статус договора"
     >
@@ -30,6 +32,7 @@ function StatusSelect({ value, onChange }) {
 
 export default function MemberCard({ funnel, deal, member, onGenerate }) {
   const { state, actions } = useStore()
+  const editable = canEdit(state)
   const cfg = FUNNEL_CONFIG[funnel.kind] || {}
   const contacts = memberContacts(member, state.contacts)
   const [adding, setAdding] = useState(false)
@@ -64,16 +67,18 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
         <div className="flex-1">
           <EditableField value={member.label} onChange={(v) => upd({ label: v })} label="Название участника" />
         </div>
-        <StatusSelect value={member.contractStatus} onChange={(v) => upd({ contractStatus: v })} />
-        <button
-          onClick={() => {
-            if (confirm('Удалить участника со всеми детьми?')) actions.removeMember(funnel.id, deal.id, member.id)
-          }}
-          className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-ink-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
-          title="Удалить участника"
-        >
-          <IconClose className="text-[15px]" />
-        </button>
+        <StatusSelect value={member.contractStatus} disabled={!editable} onChange={(v) => upd({ contractStatus: v })} />
+        {editable && (
+          <button
+            onClick={() => {
+              if (confirm('Удалить участника со всеми детьми?')) actions.removeMember(funnel.id, deal.id, member.id)
+            }}
+            className="grid h-7 w-7 shrink-0 place-items-center rounded-lg text-ink-300 transition-colors hover:bg-rose-50 hover:text-rose-500"
+            title="Удалить участника"
+          >
+            <IconClose className="text-[15px]" />
+          </button>
+        )}
       </div>
 
       {/* Договор / суммы */}
@@ -101,6 +106,7 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
       <div className="mt-3">
         <div className="mb-1.5 flex items-center justify-between">
           <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-ink-400">Контакты</span>
+          {editable && (
           <div className="flex items-center gap-1">
             {available.length > 0 && (
               <select
@@ -116,6 +122,7 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
             )}
             <button onClick={createContact} className="rounded-lg bg-brand-50 px-2 py-1 text-[11px] font-bold text-brand-600 hover:bg-brand-100">+ новый</button>
           </div>
+          )}
         </div>
         <div className="space-y-1.5">
           {contacts.length === 0 && <p className="px-1 text-[11.5px] text-ink-300">Контакты не привязаны</p>}
@@ -127,7 +134,7 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
                 <EditableField value={c.role} type="select" options={(cfg.contactRoles || []).map((r) => ({ value: r, label: r }))} onChange={(v) => actions.contacts.update(c.id, { role: v })} compact placeholder="роль" />
                 <EditableField value={c.phone} onChange={(v) => actions.contacts.update(c.id, { phone: v })} compact placeholder="телефон" />
               </div>
-              <button onClick={() => unlink(c.id)} className="grid h-6 w-6 shrink-0 place-items-center rounded-lg text-ink-300 hover:bg-rose-50 hover:text-rose-500" title="Отвязать"><IconClose className="text-[13px]" /></button>
+              {editable && <button onClick={() => unlink(c.id)} className="grid h-6 w-6 shrink-0 place-items-center rounded-lg text-ink-300 hover:bg-rose-50 hover:text-rose-500" title="Отвязать"><IconClose className="text-[13px]" /></button>}
             </div>
           ))}
         </div>
@@ -137,7 +144,7 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
       <div className="mt-3">
         <div className="mb-1.5 flex items-center justify-between">
           <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-ink-400">{cfg.beneficiaryLabelPlural}</span>
-          <button onClick={addBeneficiary} className="rounded-lg bg-brand-50 px-2 py-1 text-[11px] font-bold text-brand-600 hover:bg-brand-100">+ добавить</button>
+          {editable && <button onClick={addBeneficiary} className="rounded-lg bg-brand-50 px-2 py-1 text-[11px] font-bold text-brand-600 hover:bg-brand-100">+ добавить</button>}
         </div>
         <div className="space-y-1.5">
           {(member.beneficiaries || []).length === 0 && <p className="px-1 text-[11.5px] text-ink-300">Пока пусто</p>}
@@ -148,12 +155,14 @@ export default function MemberCard({ funnel, deal, member, onGenerate }) {
       </div>
 
       {/* Действие: документ */}
-      <button
-        onClick={() => onGenerate(member)}
-        className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink-900/[0.03] py-2.5 text-[12.5px] font-bold text-ink-700 ring-1 ring-ink-900/[0.06] transition-all hover:bg-brand-50 hover:text-brand-700 hover:ring-brand-500/30 active:scale-[0.99]"
-      >
-        <IconDoc className="text-[15px]" /> Сформировать документ по участнику
-      </button>
+      {editable && (
+        <button
+          onClick={() => onGenerate(member)}
+          className="group mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink-900/[0.03] py-2.5 text-[12.5px] font-bold text-ink-700 ring-1 ring-ink-900/[0.06] transition-all hover:bg-brand-50 hover:text-brand-700 hover:ring-brand-500/30 active:scale-[0.99]"
+        >
+          <IconDoc className="text-[15px]" /> Сформировать документ по участнику
+        </button>
+      )}
     </div>
   )
 }

@@ -206,6 +206,51 @@ export function formatMoneyShort(n) {
   return n + ' ₽'
 }
 
+// ── РЕЕСТР: пользователи (роли/права) ────────────────────────────────────
+export const SEED_USERS = [
+  { id: 'u-olga', name: 'Ольга Директор', initials: 'ОД', color: '#1f47f5', role: 'admin', email: 'director@rcto.ru', online: true },
+  { id: 'u-shutova', name: 'Екатерина Шутова', initials: 'ЕШ', color: '#0ea5a3', role: 'manager', email: 'shutova@rcto.ru', online: true },
+  { id: 'u-ruslan', name: 'Руслан Ахметов', initials: 'РА', color: '#e08a16', role: 'manager', email: 'ruslan@rcto.ru', online: false },
+  { id: 'u-anna', name: 'Анна Котова', initials: 'АК', color: '#d9488a', role: 'manager', email: 'anna@rcto.ru', online: true },
+  { id: 'u-buh', name: 'Ирина Бухгалтер', initials: 'ИБ', color: '#7c5cff', role: 'viewer', email: 'buh@rcto.ru', online: false },
+]
+
+// ── ЧАТЫ ─────────────────────────────────────────────────────────────────
+export const SEED_CHATS = [
+  {
+    id: 'ch-general', type: 'channel', name: 'Общий', memberIds: SEED_USERS.map((u) => u.id),
+    messages: [
+      { id: 'mg1', userId: 'u-olga', text: 'Коллеги, на этой неделе закрываем смены по «Лебяжьему». Держим оплаты на контроле.', at: 'вчера, 09:12' },
+      { id: 'mg2', userId: 'u-anna', text: 'По группе СОШ №24 два договора подписаны, третий на подписании.', at: 'вчера, 10:40' },
+      { id: 'mg3', userId: 'u-ruslan', text: '«Ижсталь» подтвердила 40 путёвок в «Металлург».', at: 'вчера, 15:05' },
+    ],
+  },
+  {
+    id: 'ch-managers', type: 'channel', name: 'Менеджеры', memberIds: ['u-olga', 'u-shutova', 'u-ruslan', 'u-anna'],
+    messages: [
+      { id: 'mm1', userId: 'u-olga', text: 'Не забываем фиксировать сумму оплаты прямо в карточке сделки.', at: 'пн, 12:00' },
+      { id: 'mm2', userId: 'u-shutova', text: 'Принято 👍', at: 'пн, 12:03' },
+    ],
+  },
+  {
+    id: 'ch-dm-anna', type: 'direct', name: 'Анна Котова', memberIds: ['u-olga', 'u-anna'],
+    messages: [
+      { id: 'md1', userId: 'u-anna', text: 'Ольга, по Петровым нужна рассрочка, согласуем?', at: 'сегодня, 08:30' },
+      { id: 'md2', userId: 'u-olga', text: 'Да, оформляй предоплату 50%.', at: 'сегодня, 08:33' },
+    ],
+  },
+]
+
+// ── ЛЕНТА СОБЫТИЙ (таймлайн сделок), newest-first ────────────────────────
+export const SEED_EVENTS = [
+  { id: 'ev1', dealId: 'Ф-GRP-01', funnelId: 'fiz', type: 'comment', text: 'Родители Петровых просят рассрочку — согласовано 50% предоплата.', userId: 'u-olga', at: 'сегодня, 08:35' },
+  { id: 'ev2', dealId: 'Ф-GRP-01', funnelId: 'fiz', type: 'status', text: 'Статус договора «Семья Ивановых»: Подписан', userId: 'u-anna', at: 'вчера, 16:30' },
+  { id: 'ev3', dealId: 'Ф-GRP-01', funnelId: 'fiz', type: 'doc', text: 'Сформирован документ: Договор Д-1180', userId: 'u-anna', at: 'вчера, 12:10' },
+  { id: 'ev4', dealId: 'Ф-GRP-01', funnelId: 'fiz', type: 'stage', text: 'Стадия: «Формирование путёвок» → «Заключение договора»', userId: 'u-anna', at: 'вчера, 11:20' },
+  { id: 'ev5', dealId: 'Ф-GRP-01', funnelId: 'fiz', type: 'created', text: 'Сделка создана из лида', userId: 'u-anna', at: 'вчера, 10:05' },
+  { id: 'ev6', dealId: 'Ф-2207', funnelId: 'fiz', type: 'created', text: 'Сделка создана из лида', userId: 'u-shutova', at: 'сегодня, 09:00' },
+]
+
 export function buildInitialState() {
   return {
     companies: SEED_COMPANIES.map((x) => ({ ...x })),
@@ -215,5 +260,9 @@ export function buildInitialState() {
     deals: JSON.parse(JSON.stringify(SEED_DEALS)),
     templates: [],
     documents: [],
+    users: SEED_USERS.map((x) => ({ ...x })),
+    chats: JSON.parse(JSON.stringify(SEED_CHATS)),
+    events: SEED_EVENTS.map((x) => ({ ...x })),
+    currentUserId: 'u-olga',
   }
 }

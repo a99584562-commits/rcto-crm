@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatMoney } from '../../data/seed.js'
+import { canEdit } from '../../data/perm.js'
+import { useStore } from '../../store/StoreContext.jsx'
 
 // Универсальное инлайн-редактируемое поле.
 // type: text | textarea | number | money | date | select | bool
@@ -13,6 +15,8 @@ export default function EditableField({
   label,
   compact = false,
 }) {
+  const { state } = useStore()
+  const ro = !canEdit(state)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(value)
   const ref = useRef(null)
@@ -35,7 +39,8 @@ export default function EditableField({
     return (
       <button
         type="button"
-        onClick={() => onChange?.(!value)}
+        disabled={ro}
+        onClick={() => !ro && onChange?.(!value)}
         className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-300 ease-spring ${value ? 'bg-brand-600' : 'bg-ink-900/15'}`}
         aria-pressed={value}
       >
@@ -55,6 +60,15 @@ export default function EditableField({
 
   const fieldBase =
     'w-full rounded-lg bg-white px-2.5 py-1.5 text-[13px] font-semibold text-ink-900 outline-none ring-1 ring-brand-500 transition-shadow'
+
+  // read-only: показываем значение без возможности редактирования
+  if (ro) {
+    return (
+      <div className={`w-full rounded-lg px-2.5 ${compact ? 'py-1' : 'py-1.5'} text-left text-[13px] font-semibold ${value === '' || value == null ? 'text-ink-300' : 'text-ink-700'}`}>
+        <span className="truncate">{display()}</span>
+      </div>
+    )
+  }
 
   if (editing) {
     if (type === 'select') {
