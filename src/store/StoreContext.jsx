@@ -4,8 +4,8 @@ import { DEAL_FIELDS, FUNNEL_CONFIG } from '../data/schema.js'
 import { uid } from '../data/model.js'
 import { buildSampleTemplate } from '../docs/docxEngine.js'
 
-const KEY = 'rcto-crm-v4'
-const VERSION = 4
+const KEY = 'rcto-crm-v5'
+const VERSION = 5
 
 const ddmmyyyy = (iso) => {
   if (!iso || !iso.includes('-')) return iso || ''
@@ -32,7 +32,7 @@ function loadState() {
   return freshState()
 }
 
-const COLLECTIONS = ['companies', 'contacts', 'camps', 'shifts', 'templates', 'documents', 'users', 'tasks']
+const COLLECTIONS = ['companies', 'contacts', 'camps', 'shifts', 'templates', 'documents', 'users', 'tasks', 'kb']
 
 function mapDeal(state, funnelId, dealId, fn) {
   return { ...state, deals: { ...state.deals, [funnelId]: state.deals[funnelId].map((d) => (d.id === dealId ? fn(d) : d)) } }
@@ -175,6 +175,7 @@ export function StoreProvider({ children }) {
       documents: reg('documents'),
       users: reg('users'),
       tasks: reg('tasks'),
+      kb: reg('kb'),
       addTask: (task) => dispatch({ type: 'TASK_ADD', task }),
       toggleTask: (id) => dispatch({ type: 'TASK_TOGGLE', id }),
       setCurrentUser: (id) => dispatch({ type: 'SET_USER', id }),

@@ -11,6 +11,7 @@ import CampsShiftsView from './components/registry/CampsShiftsView.jsx'
 import DocumentsView from './components/registry/DocumentsView.jsx'
 import TemplatesView from './components/templates/TemplatesView.jsx'
 import UsersView from './components/registry/UsersView.jsx'
+import KnowledgeBaseView from './components/kb/KnowledgeBaseView.jsx'
 
 const VIEWS = {
   pipelines: PipelinesView,
@@ -22,6 +23,7 @@ const VIEWS = {
   documents: DocumentsView,
   templates: TemplatesView,
   users: UsersView,
+  kb: KnowledgeBaseView,
 }
 
 function Shell() {

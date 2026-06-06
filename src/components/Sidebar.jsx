@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../store/StoreContext.jsx'
 import { currentUser, canManageUsers, ROLE_LABELS, ROLE_COLORS } from '../data/perm.js'
-import { IconLayers, IconUser, IconBuilding, IconGlobe, IconDoc, IconBolt, IconChat, IconUsers, IconTask } from './Icons.jsx'
+import { IconLayers, IconUser, IconBuilding, IconGlobe, IconDoc, IconBolt, IconChat, IconUsers, IconTask, IconBook } from './Icons.jsx'
 
 const NAV = [
   { id: 'pipelines', label: 'Воронки', icon: IconLayers },
@@ -13,6 +13,7 @@ const NAV = [
   { id: 'documents', label: 'Документы', icon: IconDoc },
   { id: 'templates', label: 'Шаблоны', icon: IconBolt },
   { id: 'users', label: 'Пользователи', icon: IconUsers, adminOnly: true },
+  { id: 'kb', label: 'База знаний', icon: IconBook },
 ]
 
 export default function Sidebar({ view, setView }) {
