@@ -282,7 +282,7 @@ const st = (...texts) => texts.map((t, i) => ({ id: `s${i}`, text: t, image: nul
 function seedKb() {
   return [
     {
-      id: 'kb-overview', category: 'Начало работы', emoji: '🚀', title: 'Обзор системы', updatedAt: '',
+      id: 'kb-overview', category: 'Начало работы', emoji: '🚀', title: 'Обзор системы', updatedAt: '', illo: 'overview',
       intro: 'CRM РЦТО — единое окно для работы с путёвками, лагерями и турами. Все разделы — в левом меню.',
       steps: st(
         'Слева — меню разделов: Воронки (сделки), Задачи, Чаты, Контакты, Компании, Лагеря и смены, Документы, Шаблоны, Пользователи и База знаний.',
@@ -336,7 +336,7 @@ function seedKb() {
       ),
     },
     {
-      id: 'kb-word', category: 'Документы', emoji: '📎', title: 'Свой Word-шаблон', updatedAt: '',
+      id: 'kb-word', category: 'Документы', emoji: '📎', title: 'Свой Word-шаблон', updatedAt: '', illo: 'word',
       intro: 'Если есть готовый Word-бланк (с печатями, логотипом) — используйте его.',
       steps: st(
         'В разделе «Шаблоны» откройте каталог полей и скопируйте нужные метки (например {номер_договора}).',
@@ -347,7 +347,7 @@ function seedKb() {
       ),
     },
     {
-      id: 'kb-docgen', category: 'Документы', emoji: '📄', title: 'Формирование документа', updatedAt: '',
+      id: 'kb-docgen', category: 'Документы', emoji: '📄', title: 'Формирование документа', updatedAt: '', illo: 'docgen',
       intro: 'Готовые шаблоны превращаются в заполненные документы прямо из сделки.',
       steps: st(
         'Откройте сделку. Нажмите «Сформировать документ по участнику» или «Документ по сделке».',
@@ -369,7 +369,7 @@ function seedKb() {
       ),
     },
     {
-      id: 'kb-registries', category: 'Реестры', emoji: '📚', title: 'Контакты, компании, лагеря и смены', updatedAt: '',
+      id: 'kb-registries', category: 'Реестры', emoji: '📚', title: 'Контакты, компании, лагеря и смены', updatedAt: '', illo: 'registries',
       intro: 'Справочники, из которых данные подтягиваются в сделки и документы.',
       steps: st(
         '«Контакты» — родители, преподаватели, контактные лица. «+ Добавить», поля правятся по клику.',
@@ -380,7 +380,7 @@ function seedKb() {
       ),
     },
     {
-      id: 'kb-team', category: 'Команда', emoji: '💬', title: 'Чаты, пользователи и права', updatedAt: '',
+      id: 'kb-team', category: 'Команда', emoji: '💬', title: 'Чаты, пользователи и права', updatedAt: '', illo: 'team',
       intro: 'Командная переписка и управление доступом сотрудников.',
       steps: st(
         '«Чаты» — каналы и личные диалоги. «+ Написать сотруднику» → выберите коллегу, диалог создастся сам.',
@@ -391,7 +391,7 @@ function seedKb() {
       ),
     },
     {
-      id: 'kb-integrations', category: 'Интеграции', emoji: '🔌', title: 'Телефония и 1С', updatedAt: '',
+      id: 'kb-integrations', category: 'Интеграции', emoji: '🔌', title: 'Телефония и 1С', updatedAt: '', illo: 'integrations',
       intro: 'На облачном сервере приложение подключается к телефонии, 1С и другим сервисам по API.',
       steps: st(
         'В карточке сделки кнопки «Позвонить» и «1С» — точки интеграции (в демо имитируются).',
