@@ -4,8 +4,8 @@ import { DEAL_FIELDS, FUNNEL_CONFIG } from '../data/schema.js'
 import { uid } from '../data/model.js'
 import { buildSampleTemplate } from '../docs/docxEngine.js'
 
-const KEY = 'rcto-crm-v5'
-const VERSION = 5
+const KEY = 'rcto-crm-v6'
+const VERSION = 6
 
 const ddmmyyyy = (iso) => {
   if (!iso || !iso.includes('-')) return iso || ''

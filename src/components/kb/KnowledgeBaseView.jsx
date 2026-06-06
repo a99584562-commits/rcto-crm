@@ -4,6 +4,7 @@ import { canEdit } from '../../data/perm.js'
 import { KB_CATEGORIES } from '../../data/seed.js'
 import { uid } from '../../data/model.js'
 import ImageDrop from './ImageDrop.jsx'
+import Illustration, { ILLO_OPTIONS } from './Illustration.jsx'
 import { IconSearch, IconBook, IconClose, IconCheck } from '../Icons.jsx'
 
 export default function KnowledgeBaseView() {
@@ -119,8 +120,19 @@ export default function KnowledgeBaseView() {
               {editing ? (
                 <textarea value={article.intro} onChange={(e) => upd({ intro: e.target.value })} rows={2} placeholder="Краткое описание…" className="mb-5 w-full resize-none rounded-xl bg-white px-3 py-2 text-[14px] leading-relaxed text-ink-700 outline-none ring-1 ring-ink-900/[0.06] focus:ring-2 focus:ring-brand-500" />
               ) : (
-                article.intro && <p className="mb-6 text-[14.5px] leading-relaxed text-ink-500">{article.intro}</p>
+                article.intro && <p className="mb-4 text-[14.5px] leading-relaxed text-ink-500">{article.intro}</p>
               )}
+
+              {/* Иллюстрация экрана с указателями */}
+              {editing && (
+                <div className="mb-3">
+                  <label className="mb-1 block text-[10.5px] font-bold uppercase tracking-wide text-ink-400">Иллюстрация экрана</label>
+                  <select value={article.illo || ''} onChange={(e) => upd({ illo: e.target.value || null })} className="rounded-xl bg-white px-3 py-1.5 text-[12.5px] font-semibold text-ink-700 outline-none ring-1 ring-ink-900/[0.06] focus:ring-2 focus:ring-brand-500">
+                    {ILLO_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                  </select>
+                </div>
+              )}
+              {article.illo && <Illustration name={article.illo} />}
 
               {/* Шаги */}
               <div className="space-y-3">
