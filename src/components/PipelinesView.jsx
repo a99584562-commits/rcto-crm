@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
 import { FUNNELS } from '../data/seed.js'
 import { getDealAmount, getMembers, memberContacts, byId } from '../data/model.js'
+import { canEdit } from '../data/perm.js'
 import { useStore } from '../store/StoreContext.jsx'
+
+const ID_PREFIX = { leads: 'L', fiz: 'Ф', ul: 'Ю', to: 'Т' }
 import TopBar from './TopBar.jsx'
 import Board from './Board.jsx'
 import DealView from './deal/DealView.jsx'
@@ -16,6 +19,21 @@ export default function PipelinesView() {
 
   const funnel = FUNNELS.find((f) => f.id === activeId)
   const deals = state.deals[activeId] || []
+  const editable = canEdit(state)
+
+  function createDeal(stageId) {
+    const kind = funnel.kind
+    const id = `${ID_PREFIX[kind] || 'D'}-${Math.floor(1000 + Math.random() * 9000)}`
+    const base = { id, funnelId: activeId, stageId: stageId || funnel.stages[0].id, manager: 'shutova' }
+    let deal
+    if (kind === 'leads') deal = { ...base, title: 'Новый лид', source: 'site', phone: '', note: '', amount: null, paid: null, createdAt: 'только что' }
+    else if (kind === 'fiz') deal = { ...base, title: 'Новая сделка', companyId: null, sourceContactId: null, members: [] }
+    else if (kind === 'ul') deal = { ...base, title: 'Новая сделка', companyId: null, payType: 'Предоплата', members: [] }
+    else deal = { ...base, title: 'Новая сделка', companyId: null, tour: '', dates: '', region: '', members: [] }
+    actions.addDeal(activeId, deal)
+    actions.logEvent(id, activeId, 'created', kind === 'leads' ? 'Лид создан вручную' : 'Сделка создана вручную')
+    setSelectedId(id)
+  }
 
   const counts = useMemo(() => {
     const out = {}
@@ -53,9 +71,11 @@ export default function PipelinesView() {
         query={query}
         setQuery={setQuery}
         counts={counts}
+        canCreate={editable}
+        onCreate={() => createDeal()}
         onOpenIntegrations={() => setShowIntegrations(true)}
       />
-      <Board funnel={funnel} deals={visibleDeals} onMove={(dealId, stageId) => actions.moveDeal(activeId, dealId, stageId)} onOpenDeal={(d) => setSelectedId(d.id)} />
+      <Board funnel={funnel} deals={visibleDeals} editable={editable} onCreate={createDeal} onMove={(dealId, stageId) => actions.moveDeal(activeId, dealId, stageId)} onOpenDeal={(d) => setSelectedId(d.id)} />
 
       {selectedDeal && <DealView deal={selectedDeal} funnel={funnel} onClose={() => setSelectedId(null)} />}
       {showIntegrations && <IntegrationsModal onClose={() => setShowIntegrations(false)} />}

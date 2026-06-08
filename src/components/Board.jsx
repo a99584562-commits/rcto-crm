@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import Column from './Column.jsx'
 import { getDealAmount } from '../data/model.js'
 
-export default function Board({ funnel, deals, onMove, onOpenDeal }) {
+export default function Board({ funnel, deals, onMove, onOpenDeal, onCreate, editable }) {
   const [draggingId, setDraggingId] = useState(null)
   const dragged = useRef(null)
 
@@ -41,6 +41,8 @@ export default function Board({ funnel, deals, onMove, onOpenDeal }) {
               onOpenDeal={onOpenDeal}
               drag={drag}
               total={total}
+              editable={editable}
+              onAdd={() => onCreate(stage.id)}
             />
           )
         })}

@@ -17,7 +17,8 @@ function IntegrationPill({ icon: Icon, label, onClick }) {
   )
 }
 
-export default function TopBar({ funnels, activeId, onSelect, query, setQuery, counts, onOpenIntegrations }) {
+export default function TopBar({ funnels, activeId, onSelect, query, setQuery, counts, canCreate, onCreate, onOpenIntegrations }) {
+  const createLabel = funnels.find((f) => f.id === activeId)?.kind === 'leads' ? '+ Лид' : '+ Сделка'
   return (
     <header className="z-20 border-b border-ink-900/[0.06] bg-canvas/85 backdrop-blur-xl">
       <div className="flex flex-wrap items-center gap-3 px-5 pt-4 sm:px-7">
@@ -26,6 +27,14 @@ export default function TopBar({ funnels, activeId, onSelect, query, setQuery, c
           <p className="text-[11.5px] font-medium text-ink-400">Канбан · перетаскивайте сделки между стадиями</p>
         </div>
         <div className="ml-auto flex items-center gap-2.5">
+          {canCreate && (
+            <button
+              onClick={onCreate}
+              className="rounded-full bg-brand-600 px-4 py-2 text-[13px] font-bold text-white shadow-glow transition-all duration-300 ease-spring hover:bg-brand-700 active:scale-[0.98]"
+            >
+              {createLabel}
+            </button>
+          )}
           <div className="relative">
             <IconSearch className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[15px] text-ink-400" />
             <input

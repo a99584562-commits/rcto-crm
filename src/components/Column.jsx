@@ -2,7 +2,7 @@ import { useState } from 'react'
 import DealCard from './DealCard.jsx'
 import { formatMoneyShort } from '../data/seed.js'
 
-export default function Column({ stage, deals, funnel, onOpenDeal, drag, total }) {
+export default function Column({ stage, deals, funnel, onOpenDeal, drag, total, editable, onAdd }) {
   const [over, setOver] = useState(false)
   const isWin = stage.kind === 'win'
   const isLost = stage.kind === 'lost'
@@ -32,6 +32,15 @@ export default function Column({ stage, deals, funnel, onOpenDeal, drag, total }
           <span className="grid min-w-[22px] place-items-center rounded-full bg-ink-900/[0.05] px-1.5 text-[11px] font-bold text-ink-500">
             {deals.length}
           </span>
+          {editable && (
+            <button
+              onClick={onAdd}
+              title="Создать в этой стадии"
+              className="grid h-6 w-6 shrink-0 place-items-center rounded-lg text-[16px] font-bold leading-none text-ink-400 transition-colors hover:bg-brand-50 hover:text-brand-600"
+            >
+              +
+            </button>
+          )}
         </div>
         <div className="mt-1.5 flex items-center gap-2 pl-[18px]">
           {total > 0 && (
@@ -73,11 +82,17 @@ export default function Column({ stage, deals, funnel, onOpenDeal, drag, total }
             dragging={drag.draggingId === d.id}
           />
         ))}
-        {deals.length === 0 && (
-          <div className="grid flex-1 place-items-center rounded-2xl border border-dashed border-ink-900/10 py-8 text-[11px] text-ink-300">
-            Перетащите сделку сюда
-          </div>
-        )}
+        {deals.length === 0 &&
+          (editable ? (
+            <button
+              onClick={onAdd}
+              className="grid flex-1 place-items-center rounded-2xl border border-dashed border-ink-900/10 py-8 text-[11px] font-semibold text-ink-300 transition-colors hover:border-brand-500/40 hover:bg-brand-50/40 hover:text-brand-600"
+            >
+              + Добавить
+            </button>
+          ) : (
+            <div className="grid flex-1 place-items-center rounded-2xl border border-dashed border-ink-900/10 py-8 text-[11px] text-ink-300">Перетащите сделку сюда</div>
+          ))}
       </div>
     </section>
   )
